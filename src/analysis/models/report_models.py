@@ -10,9 +10,19 @@ class SalesSummary:
     """
 
     total_items_sold: int
+
+    unique_products: int
+    total_sales_days: int
+    average_daily_sales: float
+
     best_selling_item: str
+    best_selling_item_qty: int
+
     best_sales_day: str
+    best_sales_day_qty: int
+
     best_sales_month: str
+    best_sales_month_qty: int
 
 
 @dataclass
@@ -21,8 +31,11 @@ class MenuPerformance:
     Product-level performance analysis.
     """
 
-    sales_by_menu: Dict[str, int]
-    top_products: Dict[str, int]
+    sales_by_menu: dict
+    top_products: dict
+    product_rankings: list
+    product_contribution: dict
+    total_products: int
 
 
 @dataclass
@@ -31,8 +44,13 @@ class TimeAnalysis:
     Sales patterns over time.
     """
 
-    sales_by_day: Dict[str, int]
-    sales_by_month: Dict[str, int]
+    sales_by_day: dict
+    sales_by_month: dict
+    monthly_growth: dict
+    sales_by_date: dict
+    best_sales_date: str
+    average_daily_sales: float
+    weekend_vs_weekday: dict
 
 
 @dataclass
@@ -43,8 +61,8 @@ class PromotionAnalysis:
 
     promotion_sales: int
     regular_sales: int
-    promotion_percentage: float
-
+    promotion_lift: dict
+    best_promotion_item: str
 
 @dataclass
 class SalesReport:

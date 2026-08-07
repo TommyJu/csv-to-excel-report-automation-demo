@@ -1,7 +1,8 @@
 from src.data_loader import load_sales
 from src.cleaner import clean_sales
 from src.analysis.sales_analysis import analyze_sales
-from src.excel_report import create_excel_report
+from src.create_excel_report.excel_report import create_excel_report
+
 
 def main():
     data = load_sales()

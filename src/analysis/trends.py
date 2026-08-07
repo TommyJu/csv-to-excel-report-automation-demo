@@ -11,30 +11,32 @@ def analyze_trends(df: pd.DataFrame) -> TimeAnalysis:
     )
 
 
-    # Daily patterns
+    # -------------------------
+    # Sales by Day of Week
+    # -------------------------
 
     sales_by_day = (
         df.groupby("Day")["Total_Qty"]
         .sum()
-        .sort_values(ascending=False)
+        .sort_values(
+            ascending=False
+        )
     )
 
 
-    # Monthly trends
+    # -------------------------
+    # Monthly Sales
+    # -------------------------
 
     monthly_sales = (
         df.groupby(
             df["Date"].dt.month
         )["Total_Qty"]
         .sum()
-    )
-
-
-    # Fill missing months
-
-    monthly_sales = monthly_sales.reindex(
-        range(1, 13),
-        fill_value=0
+        .reindex(
+            range(1, 13),
+            fill_value=0
+        )
     )
 
 
@@ -55,11 +57,89 @@ def analyze_trends(df: pd.DataFrame) -> TimeAnalysis:
 
 
     monthly_sales.index = (
-        monthly_sales.index.map(month_names)
+        monthly_sales.index
+        .map(month_names)
+    )
+
+
+    # -------------------------
+    # Monthly Growth
+    # -------------------------
+
+    monthly_growth = (
+        monthly_sales
+        .pct_change()
+        .fillna(0)
+        * 100
+    )
+
+
+    monthly_growth = (
+        monthly_growth
+        .round(2)
+    )
+
+
+    # -------------------------
+    # Daily Sales Trends
+    # -------------------------
+
+    sales_by_date = (
+        df.groupby("Date")["Total_Qty"]
+        .sum()
+        .sort_values(
+            ascending=False
+        )
+    )
+
+
+    best_sales_date = (
+        sales_by_date
+        .idxmax()
+        .strftime("%Y-%m-%d")
+    )
+
+
+    average_daily_sales = (
+        sales_by_date
+        .mean()
+    )
+
+
+    # -------------------------
+    # Weekend vs Weekday
+    # -------------------------
+
+    df["Day_Type"] = df["Date"].dt.dayofweek.map(
+        lambda x: "Weekend"
+        if x >= 5
+        else "Weekday"
+    )
+
+
+    weekend_vs_weekday = (
+        df.groupby("Day_Type")["Total_Qty"]
+        .sum()
     )
 
 
     return TimeAnalysis(
+
         sales_by_day=sales_by_day.to_dict(),
-        sales_by_month=monthly_sales.to_dict()
+
+        sales_by_month=monthly_sales.to_dict(),
+
+        monthly_growth=monthly_growth.to_dict(),
+
+        sales_by_date=sales_by_date.to_dict(),
+
+        best_sales_date=best_sales_date,
+
+        average_daily_sales=round(
+            average_daily_sales,
+            2
+        ),
+
+        weekend_vs_weekday=
+            weekend_vs_weekday.to_dict()
     )
